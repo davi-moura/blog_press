@@ -13,5 +13,6 @@ const Category = connection.define('categories',{
     }
 })
 
+// Category.sync({force: true})//criacao da tabela
 
 module.exports = Category
