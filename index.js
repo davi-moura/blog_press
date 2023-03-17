@@ -43,10 +43,72 @@ app.use("/",articlesController)
 
 //rotas
 app.get("/", (req,res) =>{
-    res.render("index")
+
+    Article.findAll({//pegando os artigos no bd
+        order: [//ordenando por id
+            ['id', 'DESC']
+        ]        
+    }).then( articles =>{//achou
+        Category.findAll().then( categories =>{//pesquisa tbm as categorias
+            res.render("index", {//e manda tudo pra view
+                articles: articles,
+                categories: categories
+            })
+        })
+    })
 })
 
+app.get("/:slug", (req,res) =>{
+    var slug = req.params.slug
 
+    Article.findOne({
+        where: {
+            slug: slug
+        }
+    }).then( article =>{
+        if(article != undefined){
+            Category.findAll().then( categories =>{//pesquisa tbm as categorias
+                res.render("article", {//e manda tudo pra view
+                    article: article,
+                    categories: categories
+                })
+            })
+        }else{
+            res.redirect("/")
+        }
+    }).catch(err =>{
+        res.redirect("/")
+    })
+
+})
+
+app.get("/category/:slug", (req, res) => {
+    var slug = req.params.slug
+
+    Category.findOne({
+        where: {
+            slug: slug
+        },
+        include: [{
+            model: Article
+        }]
+    }).then( category =>{
+        if(category != undefined){
+
+            Category.findAll().then( categories =>{//pesquisa tbm as categorias
+                res.render("index", {//e manda tudo pra view
+                    articles: category.articles,
+                    categories: categories
+                })
+            })
+
+        }else{//se for nula
+            res.redirect("/")
+        }
+    }).catch(err =>{//se der algum b.o na pesquisa
+        res.redirect("/")
+    })
+})
 
 //startando o server
 app.listen(8181,()=>{console.log("server on!")})

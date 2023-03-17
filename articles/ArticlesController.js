@@ -30,6 +30,8 @@ router.post("/articles/save", (req, res) =>{
         categoryId: category
     }).then(() => {
         res.redirect("/admin/articles")
+    }).catch(error => {
+        res.send(error)
     })
 
 })
