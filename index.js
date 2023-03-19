@@ -47,7 +47,8 @@ app.get("/", (req,res) =>{
     Article.findAll({//pegando os artigos no bd
         order: [//ordenando por id
             ['id', 'DESC']
-        ]        
+        ],
+        limit: 4        
     }).then( articles =>{//achou
         Category.findAll().then( categories =>{//pesquisa tbm as categorias
             res.render("index", {//e manda tudo pra view
