@@ -2,13 +2,16 @@
 const express = require("express")
 const app = express()
 const bodyParser = require("body-parser")
+const session = require("express-session")
 const connection = require("./database/database")
 
 const categoriesController = require("./categories/CategoriesController")
 const articlesController = require("./articles/ArticlesController")
+const usersController = require("./users/UsersController")
 
 const Article = require("./articles/Article")
 const Category = require("./categories/Category")
+const Users = require("./users/Users")
 
 //view engine
 app.set('view engine','ejs')
@@ -16,6 +19,15 @@ app.set('view engine','ejs')
 
 //static
 app.use(express.static('public'))
+
+//redis é melhor
+//session
+app.use(session({
+    secret: 'secret123',
+    cookie: {
+        maxAge: 3600000,//1hr
+    }
+}))
 
 
 //body parser
@@ -38,6 +50,7 @@ connection
 //importando os dois controlles de rotas
 app.use("/",categoriesController)
 app.use("/",articlesController)
+app.use("/",usersController)
 
 
 
@@ -58,6 +71,29 @@ app.get("/", (req,res) =>{
         })
     })
 })
+
+//teste de setar dados na sessao
+// app.get("/session", (req,res) =>{
+//     req.session.treinamento = "asdasgfdgsdfgsdfgsdf"
+//     req.session.ano = 2023
+//     req.session.email = "davimourabreu@gmail.com"
+//     req.session.user = {
+//         username: "davimourabreu",
+//         email: "davimourabreu@gmail.com",
+//         id: 1
+//     }
+//     res.send("sessao gerada")
+
+// })
+
+// app.get("/leitura", (req,res) =>{
+//     res.json({
+//         treinamento: req.session.treinamento,
+//         ano: req.session.ano,
+//         email: req.session.email,
+//         user: req.session.user
+//     })
+// })
 
 app.get("/:slug", (req,res) =>{
     var slug = req.params.slug
