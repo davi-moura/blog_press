@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 //declarando constantes
 const express = require("express")
 const app = express()
@@ -23,7 +25,7 @@ app.use(express.static('public'))
 //redis é melhor
 //session
 app.use(session({
-    secret: 'secret123',
+    secret: process.env.SESSION_SECRET,
     cookie: {
         maxAge: 3600000,//1hr
     }
